@@ -39,7 +39,6 @@
     flex-direction: column;
 }
 
-
 .card-section-title{
     text-align: left;
    
@@ -65,6 +64,18 @@
      background-color: #000;
      color:#fff;
      cursor: pointer;
+}
+
+.action-btn-disabled{
+    width: 80%;
+    margin: auto;
+    border-radius: 5px;
+    border: 1px solid #000;
+    color:rgb(108, 108, 108);
+    background-color: #fff;
+    padding:20px;
+    font-size:1.5rem;
+    margin-top:40px;
 }
 
 
@@ -157,6 +168,13 @@
     border: 1px solid #000;
     padding: 20px;
     font-size:1.2rem;
+
+}
+
+.student-table-container{
+    overflow-y: scroll;
+    height: 60vh;
+    margin-bottom: 15px;
 }
 
 td{
@@ -224,13 +242,24 @@ th{
     padding:5px;
     display:flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
+}
+
+.student-list-record:hover{
+    color:#fff;
+    background-color: #000;
+    cursor:pointer;
 }
 
 .grade-student-section{
     padding-top:60px;
 }
 
+.grade-btn-disabled{
+    padding:10px;
+    color:rgb(143, 143, 143);
+    font-size:1.2rem;
+}
 
 
 .text-input-name{
@@ -371,6 +400,11 @@ th{
     text-decoration: none;
     color:#000;
 }
+
+.description-container{
+    text-align: center;
+}
+
 
 
 @media only screen and (min-width:1900px)
