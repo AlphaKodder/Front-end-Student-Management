@@ -6,7 +6,7 @@ import { ADD_STUDENT } from "./API_ENDPOINTS";
 import {ContextData} from "./Types";
 import {Link} from "react-router-dom";
 import { StudentsContext } from "./MainMenu";
-import axios from "axios";
+import ky from "ky";
 
 const AddStudent = ()=>{
 
@@ -30,18 +30,22 @@ const AddStudent = ()=>{
         }
         if(data<1 || data>13)
         {
-            return;
+            return; 
         }
         setClassNumber(data.toString());
     }
     
     const addStudentReq = async(e:any)=>{
         e.preventDefault();
+        const objToSend = {
+            firstName:firstNameText,
+            lastName:lastNameText,
+            classNumber:parseInt(classNumber)
+        }
+
         try{
-            const resp = await axios.post(ADD_STUDENT,{
-                firstName:firstNameText,
-                lastName:lastNameText,
-                classNumber:parseInt(classNumber)
+            const resp = await ky.post(ADD_STUDENT,{
+               json:objToSend 
             });
             console.log(resp);
             if(resp.status === 200)
@@ -49,9 +53,7 @@ const AddStudent = ()=>{
                 setShowSuccessMsg(true);
                 studentInfo.retrieveStudents();
             }
-            ///daca requestul a avut success nu uita sa faci request sa iei din nou lista 
-            /// de studenti din db!
-
+        
         } catch(err){
             console.log(err);
             setShowErrorMsg(true);

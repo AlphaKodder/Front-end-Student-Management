@@ -1,7 +1,7 @@
 import "./index.css"
 
-import React ,{useEffect, useState} from "react";
-import axios, { AxiosError } from "axios";
+import React ,{useEffect, useRef, useState} from "react";
+import ky, { KyResponse } from "ky";
 
 import {ContextData} from "./Types";
 import { GET_STUDENT_GRADES } from "./API_ENDPOINTS";
@@ -20,6 +20,7 @@ const StudentGrades = ()=>{
     const [subjectArr,setSubjects] = useState(['none']);
     const [grades,setGrades] = useState([]);
     const [filteredGrades,setFilteredGrades] = useState([]);
+    const isMounted = useRef(false);
 
     const getSelectedStudent = (firstName:string,lastName:string)=>{
           for(let i=0;i<studentInfoArr.length;i++)
@@ -34,49 +35,87 @@ const StudentGrades = ()=>{
     
     const retriveStudentGrades = async()=>{
         setNoGrades(false);
-        try{
-         const resp = await axios.get(GET_STUDENT_GRADES,{
-                headers:{
-                        firstName:  studentInfoArr[selectedStudentIndex].firstName,
-                        lastName:  studentInfoArr[selectedStudentIndex].lastName
-                }
-            
-        });  
-        setGrades(resp.data);
-        if(resp.data.length === 0)
+        let resp;
+        if(selectedStudentIndex !=-1)
         {
-            setNoGrades(true);
-            return;
+            try{
+                resp = await ky(GET_STUDENT_GRADES,{
+                      headers:{
+                              firstName:  studentInfoArr[selectedStudentIndex].firstName,
+                              lastName:  studentInfoArr[selectedStudentIndex].lastName
+                      }
+                  
+                  }) as KyResponse;
+                  
+                  const gradesArr:any = await resp.json();
+                    if(resp.body)
+                    {
+                      
+                      setGrades(gradesArr);
+                      if(gradesArr.length === 0)
+                      {
+                          setNoGrades(true);
+                          return;
+                      }
+                      const subjects = new Set<string>();
+                      for(const subj of gradesArr)
+                      {
+                          subjects.add(subj["subjectName"]);
+                      }
+                      
+                  const allData:Array<string> = [];
+                      subjects.forEach((key,value)=>{
+                          allData.push(value);
+                      })
+                      setSubjects(allData);
+      
+                    }         
+                    
+           
+              } catch(err:any){
+                  if(err.response && err.response.status === 404)
+                  {
+                      setNoGrades(true);
+                      return;
+                  }   
+                setErrorMessage(true);
+              }
         }
-        const subjects = new Set<string>();
-        for(const subj of resp.data)
-        {
-            subjects.add(subj["subjectName"]);
-        }
-        
-       const allData:Array<string> = [];
-        subjects.forEach((key,value)=>{
-            allData.push(value);
-        })
-        setSubjects(allData);
-
-        } catch(err:any){
-            if(err.response && err.response.status === 404)
-            {
-                setNoGrades(true);
-                return;
-            }   
-          setErrorMessage(true);
-        }
+      
     }
 
-    
+    const handleSelectStudent = (st:any)=>{
+        getSelectedStudent(st.firstName,st.lastName);
+        setFilteredGrades([]);
+        setGrades([]);
+        setSubjects([]);
+        setErrorMessage(false); 
+        setDropdownText('Select subject'); 
+    }
+
     const handleSetDropdownText = (value:string)=>{
         setDropdownText(value);
         const gradesAfterFilter = grades.filter((gr:any)=>{return gr.subjectName === value});
         setFilteredGrades(gradesAfterFilter);
-        console.log(gradesAfterFilter);
     }
+
+    useEffect(()=>{
+        
+         if(isMounted.current === true)
+         {
+            console.log("I was called");
+            retriveStudentGrades();
+         }
+         else
+         {
+            isMounted.current = true;
+         }
+            
+        
+    
+    },[selectedStudentIndex])
+
+    
 
     return(
         <div className="grade-student-card">
@@ -132,7 +171,7 @@ const StudentGrades = ()=>{
         })
         .map((st:any,ind:number)=>{
                 return(
-                <div className="student-list-record" key={ind} onClick={()=>{ setFilteredGrades([]); setGrades([]); setSubjects([]); setErrorMessage(false); retriveStudentGrades(); setDropdownText('Select subject'); getSelectedStudent(st.firstName,st.lastName)}}>
+                <div className="student-list-record" key={ind} onClick={()=>{ handleSelectStudent(st)}}>
                     <div>
                         <p>{st.firstName} {st.lastName}</p>
                     </div>

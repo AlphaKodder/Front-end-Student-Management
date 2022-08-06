@@ -6,7 +6,7 @@ import {ContextData} from "./Types";
 import { GRADE_STUDENT } from "./API_ENDPOINTS";
 import {Link} from "react-router-dom";
 import { StudentsContext } from "./MainMenu";
-import axios from "axios";
+import ky from "ky"
 
 const GradeStudent = ()=>{
 
@@ -54,23 +54,22 @@ const GradeStudent = ()=>{
   }
 
   const postStudentGrade = async ()=>{
+        const gradeToInt = parseInt(gradeValue);
+        const objToSend = {
+                firstName:studentInfoArr[selectedStudentIndex].firstName,
+                lastName:studentInfoArr[selectedStudentIndex].lastName,
+                grade:gradeToInt,
+                subjectName:subject 
+          }
 
         try{
-          const resp = await axios.post(GRADE_STUDENT,{
-             
-                     firstName:studentInfoArr[selectedStudentIndex].firstName,
-                     lastName:studentInfoArr[selectedStudentIndex].lastName,
-                     grade:parseInt(gradeValue),
-                     subjectName:subject   
+          
+                const resp = await ky.post(GRADE_STUDENT, {json:objToSend});
+                console.log(resp);
+                if(resp.status === 200)
+                {
+                        setReqSuccessMessage(true);
                 }
-              
-          );
-        
-        
-          if(resp.status === 200)
-          {
-                  setReqSuccessMessage(true);
-          }
 
         } catch(err){
                 console.log(err);

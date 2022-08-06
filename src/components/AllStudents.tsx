@@ -7,7 +7,6 @@ import { ContextData } from "./Types";
 import {Link} from "react-router-dom";
 import StudentGrades from "./StudentGrades";
 import { StudentsContext } from "./MainMenu";
-import axios from "axios";
 
 const AllStudents = ()=>{
     
