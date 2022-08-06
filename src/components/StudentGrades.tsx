@@ -110,12 +110,8 @@ const StudentGrades = ()=>{
          {
             isMounted.current = true;
          }
-            
-        
-    
-    },[selectedStudentIndex])
 
-    
+    },[selectedStudentIndex])
 
     return(
         <div className="grade-student-card">
@@ -127,7 +123,6 @@ const StudentGrades = ()=>{
                  <input type="text" onChange={(e)=>{setQuery(e.target.value)}}  className="search-student-input" placeholder="Search for a student"/>
               </form>
             </div>
-           
              <div className="student-info-section">
                 <h5>Selected Student</h5>
                 <p>{selectedStudentIndex!=-1 && 
@@ -143,7 +138,6 @@ const StudentGrades = ()=>{
                                 })}
                         </div>
                     </div>
-
                 </div>
                <p>Grades:{filteredGrades.length!=0 && filteredGrades.map((gr:any)=>{
                 return(
@@ -152,9 +146,7 @@ const StudentGrades = ()=>{
                }) }</p>
                {errorMessage && <p>Something went wrong!</p>}
                {noGrades &&<p>THE STUDENT DOES NOT HAVE ANY GRADES!!</p>}
-             </div> 
-            
-            
+             </div>    
         <div className="result-list-container">
         <div className="student-result-list">
         {studentInfoArr.length>0 && 
@@ -167,7 +159,6 @@ const StudentGrades = ()=>{
                 {
                         return studentSearched;
                 }
-
         })
         .map((st:any,ind:number)=>{
                 return(
@@ -183,9 +174,7 @@ const StudentGrades = ()=>{
                  })}
             </div>  
         </div>
-           
-         
-        </div>
+    </div>
     );
 };
 
